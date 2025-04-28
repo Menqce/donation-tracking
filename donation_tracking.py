@@ -68,10 +68,88 @@ def add_donor(first_name, last_name, business_name, postcode, house_number, phon
     ''', (first_name, last_name, business_name, postcode, house_number, phone_number))
     connection.commit()
 
-# Adding donors
+# Add a new donation
+def add_donation(amount_donated, donation_date, donation_source, gift_aid, notes, donor_id, event_id):
+    cursor.execute('''
+        INSERT INTO 'DONATIONS' (amount_donated, donation_date, donation_source, gift_aid, notes, donor_id, event_id)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    ''', (amount_donated, donation_date, donation_source, gift_aid, notes, donor_id, event_id))
+    connection.commit()
+
+# Add a new event
+def add_event(event_name, room_info, booking_time, event_cost):
+    cursor.execute('''
+        INSERT INTO 'EVENTS' (event_name, room_info, booking_time, event_cost)
+        VALUES (?, ?, ?, ?)
+    ''', (event_name, room_info, booking_time, event_cost))
+    connection.commit()
+
+# Add a new volunteer
+def add_volunteer(first_name, last_name, phone_number):
+    cursor.execute('''
+        INSERT INTO 'VOLUNTEERS' (first_name, last_name, phone_number)
+        VALUES (?, ?, ?)
+    ''', (first_name, last_name, phone_number))
+    connection.commit()
+
+# View donations by donor
+def view_donations_by_donor(donor_id):
+    cursor.execute('''
+        SELECT * FROM 'DONTAIONS' WHERE donor_id = ?
+    ''', (donor_id,))
+    donations = cursor.fetchall()
+    for donation in donations:
+        print(donation)
+
+# Update donation
+def update_donation(donation_id, amount_donated, gift_aid, notes):
+    cursor.execute('''
+        UPDATE 'DONATIONS' 
+        SET amount_donated = ?, gift_aid = ?, notes = ? 
+        WHERE donation_id = ?
+    ''', (amount_donated, gift_aid, notes, donation_id))
+    connection.commit()
+
+# Delete a donation (note: prevents deletion if there are dependencies)
+def delete_donation(donation_id):
+    cursor.execute('''
+        DELETE FROM 'DONATIONS' WHERE donation_id = ?
+    ''', (donation_id,))
+    connection.commit()
+
+# Test function
+def test_program():
+    # Create tables
+    create_tables()
+
+    # sample data for teesting 
+    # Adding donors
     add_donor("John", "Doe", "TechCorp", "B12 3DL", "12A", "1234567890")
     add_donor("Jane", "Smith", "HealthPlus", "AB1 2CD", "34B", "0987654321")
 
+    # Adding an event
+    add_event("Charity Gala", "Room 1", "2025-05-10 18:00", 5000.00)
+
+    # Adding donations
+    add_donation(200.00, "2025-04-25", 1, True, "Generous contribution", 1, 1)
+    add_donation(150.00, "2025-04-26", 2, False, "Regular donation", 2, None)
+
+    # Viewing donations by donor ID 1
+    print("Viewing Donations by Donor ID 1:")
+    view_donations_by_donor(1)
+
+    # Updating donation
+    print("Updating donation...")
+    update_donation(1, 250.00, False, "Updated contribution")
+    view_donations_by_donor(1)
+
+    # Deleting donation
+    print("Deleting donation...")
+    delete_donation(1)
+    view_donations_by_donor(1)
+
+# Run testings 
+test_program()
 
 # Close connection after commiting 
 connection.close()
