@@ -60,6 +60,18 @@ def create_tables():
 
     connection.commit()
 
+# Add a new donor
+def add_donor(first_name, last_name, business_name, postcode, house_number, phone_number):
+    cursor.execute('''
+        INSERT INTO 'DONORS' (first_name, last_name, business_name, postcode, house_number, phone_number)
+        VALUES (?, ?, ?, ?, ?, ?)
+    ''', (first_name, last_name, business_name, postcode, house_number, phone_number))
+    connection.commit()
+
+# Adding donors
+    add_donor("John", "Doe", "TechCorp", "B12 3DL", "12A", "1234567890")
+    add_donor("Jane", "Smith", "HealthPlus", "AB1 2CD", "34B", "0987654321")
+
 
 # Close connection after commiting 
 connection.close()
